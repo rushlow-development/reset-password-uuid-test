@@ -53,7 +53,8 @@
         "symfony/phpunit-bridge": "^6.0",
         "symfony/stopwatch": "6.1.*",
         "symfony/web-profiler-bundle": "6.1.*",
-        "symfonycasts/reset-password-bundle": "^1.11"
+        "symfonycasts/reset-password-bundle": "^1.11",
+        "zenstruck/foundry": "^1.14"
     },
     "config": {
         "allow-plugins": {
