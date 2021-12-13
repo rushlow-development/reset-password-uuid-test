@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\ResetPasswordRequestRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordRequestInterface;
 use SymfonyCasts\Bundle\ResetPassword\Model\ResetPasswordRequestTrait;
 
@@ -16,8 +17,7 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
 
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="uuid")
      */
     private $id;
 
@@ -29,11 +29,12 @@ class ResetPasswordRequest implements ResetPasswordRequestInterface
 
     public function __construct(object $user, \DateTimeInterface $expiresAt, string $selector, string $hashedToken)
     {
+        $this->id = Uuid::v4();
         $this->user = $user;
         $this->initialize($expiresAt, $selector, $hashedToken);
     }
 
-    public function getId(): ?int
+    public function getId(): Uuid
     {
         return $this->id;
     }
