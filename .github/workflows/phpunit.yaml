@@ -1,0 +1,51 @@
+name: PHPUnit Tests
+
+on:
+    push:
+        branches:
+            - main
+    pull_request:
+    release:
+
+env:
+    APP_ENV: test
+
+jobs:
+    stable-tests:
+        name: Stable 8.0
+        runs-on: ubuntu-latest
+
+        services:
+            mariadb:
+                image: mariadb:latest
+                ports:
+                    - '3306:3306'
+                env:
+                    MYSQL_ROOT_PASSWORD: password
+                    MYSQL_DATABASE: main_test
+                options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+        steps:
+            -   name: Set PHP Version
+                run: sudo update-alternatives --set php /usr/bin/php8.0
+
+            -   name: Checkout
+                uses: actions/checkout@v2
+
+            -   name: Install Composer Dependencies
+                run: composer install --prefer-dist --no-progress
+
+            -   name: Run Migrations
+                run: bin/console doctrine:migrations:migrate --no-interaction -e test
+
+            -   name: Unit Tests
+                run: bin/phpunit -c $GITHUB_WORKSPACE/phpunit.xml.dist
+
+#            -   name: Functional Tests
+#                run: bin/phpunit -c $GITHUB_WORKSPACE/phpunit.xml.dist --testsuite functional
+
+#            -   name: Integration Tests
+#                run: bin/phpunit -c $GITHUB_WORKSPACE/phpunit.xml.dist --testsuite integration
+#
+#            -   name: Acceptance Tests
+#                run: bin/phpunit -c $GITHUB_WORKSPACE/phpunit.xml.dist --testsuite acceptance
